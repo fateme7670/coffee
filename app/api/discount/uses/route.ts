@@ -21,7 +21,7 @@ export async function PUT(req:any) {
                     uses:1
                 }
             })
-            return Response.json(discount)
+            return Response.json({message:'success',data:discount})
            
         }
      

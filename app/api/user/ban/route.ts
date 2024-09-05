@@ -16,7 +16,7 @@ export async function POST(req:any) {
             return Response.json({ message: 'phone is not correct:((' }, { status: 404 })
         }
         await banModel.create({ email, phone })
-        return Response.json({ message: 'ban created successfully' })
+        return Response.json({ message: 'success' })
 
     } catch (error) {
         return Response.json({ message: error }, { status: 500 })

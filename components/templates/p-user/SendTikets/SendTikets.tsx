@@ -1,4 +1,7 @@
-'use client'
+"use client";
+import { AllDepartmentFromServer, AllSebdepartmentFromServer } from "@/Redux/features/department";
+import { AddTiketFromServer } from "@/Redux/features/Tiket";
+import { useAppDispatch } from "@/Redux/hooks";
 import { DepartmentProps, SubDepartmentProps } from "@/utils/types";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -12,62 +15,83 @@ const SendTikets = () => {
   const [title, settitle] = useState("");
   const [body, setbody] = useState("");
   const [priority, setpriority] = useState<number | string>(1);
-  const router=useRouter()
-
+  const router = useRouter();
+  const dispatch = useAppDispatch();
   useEffect(() => {
     const dep = async () => {
-        const res = await fetch('/api/department')
-        const data = await res.json()
-        setoptiondep([...data])
-    }
-    dep()
-}, []);
-useEffect(() => {
-    const dep = async () => {
-        const res = await fetch(`/api/department/subDepartment/${departmentID}`)
-        if (res.status == 200) {
-            const data = await res.json()
-            setoptiosubndep([...data])
+      dispatch(AllDepartmentFromServer()).then((data) => {
+        console.log('dep',data);
+        
+        if (data?.payload?.message === "success") {
+          setoptiondep([...data.payload.data]);
         }
-
-    }
-    dep()
-}, [departmentID]);
-const sendtiket = async () => {
-  const tiket = {
+      });
+      // const res = await fetch('/api/department')
+      // const data = await res.json()
+      // setoptiondep([...data])
+    };
+    dep();
+  }, []);
+  useEffect(() => {
+    const dep = async () => {
+      dispatch(AllSebdepartmentFromServer({id:departmentID})).then((data) => {
+        if (data?.payload?.message === "success") {
+          setoptiosubndep([...data.payload.data]);
+        }
+      });
+      // const res = await fetch(`/api/department/subDepartment/${departmentID}`);
+      // if (res.status == 200) {
+      //   const data = await res.json();
+      //   setoptiosubndep([...data]);
+      // }
+    };
+    dep();
+  }, [departmentID]);
+  const sendtiket = async () => {
+    const tiket = {
       department: departmentID,
       subDepartment: subdepartmentID,
       title,
       body,
       priority,
-
+    };
+dispatch(AddTiketFromServer({data:tiket})).then(data=>{
+  if (data?.payload?.message==='success'){
+    swal({
+      title: "send tiket successfuly",
+      icon: "success",
+      buttons: "OK",
+    }).then(() => {
+      router.replace("/p-user/tickets");
+    });
   }
-  const res = await fetch('/api/tiket', {
-      method: 'POST',
-      headers: { 'content-Type': 'application/json' },
-      body: JSON.stringify(tiket)
-  })
-  // console.log(res);
-  if (res.status == 201) {
-      swal({
-          title:"send tiket successfuly",
-          icon:'success',
-          buttons:"OK"
-      }).then(()=>{
-          router.replace('/p-user/tickets')
-      })
-  }
+})
 
-}
+    // const res = await fetch("/api/tiket", {
+    //   method: "POST",
+    //   headers: { "content-Type": "application/json" },
+    //   body: JSON.stringify(tiket),
+    // });
+    // // console.log(res);
+    // if (res.status == 201) {
+    //   swal({
+    //     title: "send tiket successfuly",
+    //     icon: "success",
+    //     buttons: "OK",
+    //   }).then(() => {
+    //     router.replace("/p-user/tickets");
+    //   });
+    // }
+  };
   return (
     <section className="container mt-10">
       <div className="flex justify-start max-md:flex-col gap-5">
         <div className="md:basis-1/2 w-full">
           <div className="">
-          <label>دپارتمان را انتخاب کنید:</label>
+            <label>دپارتمان را انتخاب کنید:</label>
 
             <select
-            onChange={(event) => setdepartmentID(event.target.value)}
+              onChange={(event) => setdepartmentID(event.target.value)}
               name="orderby"
               data-active={false}
               autoFocus={false}
@@ -75,8 +99,11 @@ const sendtiket = async () => {
               aria-label="Project status"
             >
               <option value={-1}>لطفا یک مورد را انتخاب نمایید.</option>
-              {optiondep.map(item => <option key={item._id} value={item._id}>{item.title}</option>
-                        )}
+              {optiondep.map((item) => (
+                <option key={item._id} value={item._id}>
+                  {item.title}
+                </option>
+              ))}
             </select>
           </div>
           <div className="flex flex-col mt-5">
@@ -84,8 +111,8 @@ const sendtiket = async () => {
               عنوان تیکت را وارد کنید:
             </label>
             <input
-             value={title}
-             onChange={e => settitle(e.target.value)}
+              value={title}
+              onChange={(e) => settitle(e.target.value)}
               placeholder="عنوان..."
               type="text"
               className="outline-0 border  px-2 py-2 text-subtle-medium font-shabnam border-2 rounded-md border-redprimary-500"
@@ -98,7 +125,7 @@ const sendtiket = async () => {
               عنوان تیکت را وارد کنید:
             </label>
             <select
-            onChange={(event) => setsubdepartmentID(event.target.value)}
+              onChange={(event) => setsubdepartmentID(event.target.value)}
               name="orderby"
               data-active={false}
               autoFocus={false}
@@ -106,9 +133,11 @@ const sendtiket = async () => {
               aria-label="Project status"
             >
               <option value={-1}>لطفا یک مورد را انتخاب نمایید.</option>
-              {optionsubdep.map(item => <option key={item._id} value={item._id}>{item.title}</option>
-                        )}
-
+              {optionsubdep.map((item) => (
+                <option key={item._id} value={item._id}>
+                  {item.title}
+                </option>
+              ))}
             </select>
           </div>
           <div className="flex flex-col mt-5">
@@ -116,7 +145,7 @@ const sendtiket = async () => {
               سطح اولویت تیکت را انتخاب کنید:
             </label>
             <select
-            onChange={e => setpriority(e.target.value)}
+              onChange={(e) => setpriority(e.target.value)}
               name="orderby"
               data-active={false}
               autoFocus={false}
@@ -132,32 +161,45 @@ const sendtiket = async () => {
         </div>
       </div>
       <div className="w-full">
-      <div className="flex flex-col mt-5">
-            <label className="font-shabnam mb-3 text-base1-medium">
+        <div className="flex flex-col mt-5">
+          <label className="font-shabnam mb-3 text-base1-medium">
             محتوای تیکت را وارد نمایید:
-            </label>
-            <textarea
+          </label>
+          <textarea
             value={body}
-            onChange={e => setbody(e.target.value)}
-
+            onChange={(e) => setbody(e.target.value)}
             rows={10}
-              className="outline-0 border  px-2 py-2 text-subtle-medium font-shabnam border-2 rounded-md border-redprimary-500"
-            ></textarea>
-          </div>
+            className="outline-0 border  px-2 py-2 text-subtle-medium font-shabnam border-2 rounded-md border-redprimary-500"
+          ></textarea>
+        </div>
       </div>
       <div className="bg-red-4 p-4 flex flex-col items-center gap-3 justify-center my-5  rounded-md">
-<p className="font-shabnam mb-3 text-base1-medium">حداکثر اندازه: 6 مگابایت</p>
-<p className="font-shabnam mb-3 text-base1-medium">فرمت‌های مجاز: jpg, png.jpeg, rar, zip</p>
-<div className="relative w-full">
-                    <button className="bg-redprimary-500 text-white flex w-full rounded-md p-2 gap-2 items-center justify-center">
-                      انتخاب فایل
-                   
-                    </button>
-                    <input className="absolute top-0 right-0 w-full  left-0 mx-auto opacity-0" type="file" name="" id="" />
-                  </div>
+        <p className="font-shabnam mb-3 text-base1-medium">
+          حداکثر اندازه: 6 مگابایت
+        </p>
+        <p className="font-shabnam mb-3 text-base1-medium">
+          فرمت‌های مجاز: jpg, png.jpeg, rar, zip
+        </p>
+        <div className="relative w-full">
+          <button className="bg-redprimary-500 text-white flex w-full rounded-md p-2 gap-2 items-center justify-center">
+            انتخاب فایل
+          </button>
+          <input
+            className="absolute top-0 right-0 w-full  left-0 mx-auto opacity-0"
+            type="file"
+            name=""
+            id=""
+          />
+        </div>
       </div>
-      <button onClick={sendtiket} className="flex gap-2 items-center text-white text-tiny-medium font-shabnam bg-redprimary-500 mr-2 px-4 py-2 rounded-md mb-10">   <IoIosSend />ارسال تیکت</button>
-
+      <button
+        onClick={sendtiket}
+        className="flex gap-2 items-center text-white text-tiny-medium font-shabnam bg-redprimary-500 mr-2 px-4 py-2 rounded-md mb-10"
+      >
+        {" "}
+        <IoIosSend />
+        ارسال تیکت
+      </button>
     </section>
   );
 };

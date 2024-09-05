@@ -19,9 +19,10 @@ export const AddDepartmentFromServer = createAsyncThunk(
 export const AllDepartmentFromServer = createAsyncThunk(
   "department/AllDepartmentFromServer",
   async () => {
-    return await fetch(`/api/department`, {})
+    return await fetch(`/api/department`)
       .then((res) => res.json())
       .then((data) => data);
+      
   }
 );
 export const SebdepartmentFromServer = createAsyncThunk(
@@ -38,13 +39,14 @@ export const SebdepartmentFromServer = createAsyncThunk(
       .then((data) => data);
   }
 );
+interface Props{
+  id:string | number
+}
 export const AllSebdepartmentFromServer = createAsyncThunk(
   "department/EditSebdepartmentFromServer",
-  async (id) => {
+  async ({id}:Props) => {
     return await fetch(
-      `/api/department/subDepartment/${id}`,
-      {}
-    )
+      `/api/department/subDepartment/${id}` )
       .then((res) => res.json())
       .then((data) => data);
   }
@@ -67,7 +69,7 @@ const slice = createSlice({
     ]);
     builder.addCase(
       AllSebdepartmentFromServer.fulfilled,
-      (state, action) => action.payload
+      (state, action) =>   action.payload
     );
   },
 });

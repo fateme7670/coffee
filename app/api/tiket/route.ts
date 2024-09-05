@@ -29,7 +29,7 @@ export async function POST(req:any) {
             priority,
             user:user._id
         })
-        return Response.json({ message: 'tiket send successfuly' }, { status: 201 })
+        return Response.json({ message: 'success' }, { status: 201 })
 
 
     } catch (error) {

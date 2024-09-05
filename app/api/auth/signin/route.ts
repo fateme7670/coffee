@@ -52,13 +52,13 @@ export async function POST(req: any) {
       }
     );
     return Response.json(
-      { msg: "user login",data:user },
+      { message: "success",data:user },
       {
         status: 200,
         headers,
       }
     );
   } catch (error) {
-    return Response.json({ msg: error }, { status: 500 });
+    return Response.json({ message: error }, { status: 500 });
   }
 }

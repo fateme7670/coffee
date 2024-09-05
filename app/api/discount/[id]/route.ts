@@ -12,7 +12,7 @@ export async function DELETE(req:any, { params }:{params:{id:string}}) {
       }
   
       await discountModel.findOneAndDelete({ _id: id });
-      return Response.json({ message: "User removed successfully :))" });
+      return Response.json({ message: "success" });
     } catch (err) {
       // console.log('errr',err);
       return Response.json({ message: err }, { status: 500 });

@@ -1,11 +1,14 @@
 "use client";
 
+import { AddproductFromServer } from "@/Redux/features/product";
+import { useAppDispatch } from "@/Redux/hooks";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { IoIosSend } from "react-icons/io";
 
 const Products = () => {
   const router = useRouter();
+  const dispatch=useAppDispatch()
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [shortDescription, setShortDescription] = useState("");
@@ -32,23 +35,36 @@ const Products = () => {
     formData.append("category", category.split(","));
     formData.append("Asyab", Asyab.split(","));
     formData.append("img", img);
+dispatch(AddproductFromServer({formData})).then(data=>{
+  console.log(data);
+  
+  if (data?.payload?.message==='success')
+{
+  swal({
+    title: "محصول مورد نظر با موفقیت ایجاد شد",
+    icon: "success",
+    buttons: "فهمیدم",
+  }).then(() => {
+    router.refresh();
+  });
+}
+})
+    // const res = await fetch("/api/product", {
+    //   method: "POST",
+    //   body: formData,
+    // });
 
-    const res = await fetch("/api/product", {
-      method: "POST",
-      body: formData,
-    });
+    // // console.log("Res ->", res);
 
-    // console.log("Res ->", res);
-
-    if (res.status === 201) {
-      swal({
-        title: "محصول مورد نظر با موفقیت ایجاد شد",
-        icon: "success",
-        buttons: "فهمیدم",
-      }).then(() => {
-        router.refresh();
-      });
-    }
+    // if (res.status === 201) {
+    //   swal({
+    //     title: "محصول مورد نظر با موفقیت ایجاد شد",
+    //     icon: "success",
+    //     buttons: "فهمیدم",
+    //   }).then(() => {
+    //     router.refresh();
+    //   });
+    // }
   };
   return (
     <section className="container mt-10">

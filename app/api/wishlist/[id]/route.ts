@@ -17,7 +17,7 @@ export async function DELETE(req:any, { params }:{params: {id :string}}) {
             user: user.id,
              product: productID
              })
-        return Response.json({ message: 'sish list deleted successfuly' }, { status: 200 })
+        return Response.json({ message: 'success' }, { status: 200 })
     } catch (error) {
         return Response.json({ message: error }, { status: 500 })
 
@@ -32,7 +32,7 @@ export async function GET(req:any,{ params }:{params: {id :string}}) {
             return Response.json({ message: 'user not found' }, { status: 402 })
         }
         const wish = await wishlistmodel.find({user:id}, "-__v").lean()
-        return await Response.json(wish)
+        return await Response.json({ message: 'success' ,data:wish})
   
     } catch (error) {
         return Response.json({ message: error }, { status: 500 })

@@ -1,6 +1,8 @@
 "use client";
 import { HeaderPanel } from "@/components/modules";
 import Modal from "@/components/modules/modal/Modal";
+import { DeleteArticleFromServer, EditArticleFromServer } from "@/Redux/features/article";
+import { useAppDispatch } from "@/Redux/hooks";
 import { showSwal } from "@/utils/helper";
 import { ArticlesProps } from "@/utils/types";
 import { useRouter } from "next/navigation";
@@ -18,6 +20,7 @@ interface InfoProps {
 const TAbleArticle = ({ article }: Props) => {
   const [showModal, setShowModal] = useState(false);
   const [data, setdata] = useState<ArticlesProps | null>(null);
+  const dispatch=useAppDispatch()
 
   const hideModal = () => setShowModal(false);
 
@@ -36,14 +39,9 @@ const TAbleArticle = ({ article }: Props) => {
     formData.append("authername", authername);
     formData.append("longdesc", longdesc);
     formData.append("img", img);
-    const res = await fetch(`/api/article/${id}`, {
-      method: "PUT",
-      body: formData,
-    });
-    console.log("Res ->", res);
-    if (res.status === 201) {
-    
-      swal({
+
+    dispatch(EditArticleFromServer({formData,id})).then(data=>{
+      if (data?.payload?.message==='success'){  swal({
         title: "مقاله مورد نظر با موفقیت اپدیت شد",
         icon: "success",
         buttons: "فهمیدم",
@@ -51,6 +49,22 @@ const TAbleArticle = ({ article }: Props) => {
         router.refresh();
       });
     }
+    })
+    // const res = await fetch(`/api/article/${id}`, {
+    //   method: "PUT",
+    //   body: formData,
+    // });
+    // console.log("Res ->", res);
+    // if (res.status === 201) {
+    
+    //   swal({
+    //     title: "مقاله مورد نظر با موفقیت اپدیت شد",
+    //     icon: "success",
+    //     buttons: "فهمیدم",
+    //   }).then(() => {
+    //     router.refresh();
+    //   });
+    // }
   };
   const router = useRouter();
   const showdetails = (body: string) => {
@@ -64,19 +78,32 @@ const TAbleArticle = ({ article }: Props) => {
       buttons: ["no", "yes"],
     }).then(async (result) => {
       if (result) {
-        const res = await fetch(`/api/article/${proID}`, {
-          method: "DELETE",
-        });
-        // console.log(res);
-        if (res.status === 200) {
-          swal({
-            title: "deleted successfully",
-            icon: "success",
-            buttons: "OK",
-          }).then(() => {
-            router.refresh();
-          });
-        }
+        dispatch(DeleteArticleFromServer({id:proID})).then(data=>{
+          if (data?.payload?.message==='success'){
+            swal({
+              title: "deleted successfully",
+              icon: "success",
+              buttons: "OK",
+            })
+            .then(() => {
+              router.refresh();
+            });
+          }
+        })
+
+        // const res = await fetch(`/api/article/${proID}`, {
+        //   method: "DELETE",
+        // });
+        // // console.log(res);
+        // if (res.status === 200) {
+        //   swal({
+        //     title: "deleted successfully",
+        //     icon: "success",
+        //     buttons: "OK",
+        //   }).then(() => {
+        //     router.refresh();
+        //   });
+        // }
       }
     });
   };

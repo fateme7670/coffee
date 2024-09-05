@@ -39,7 +39,7 @@ export async function POST(req: any) {
       img:`http://localhost:3000/uploads/${filename}`
     });
     return Response.json(
-      { msg: "product added successfully" , data: product},
+      { message: "success" , data: product},
       { status: 201 }
     );
   } catch (error) {
@@ -71,7 +71,7 @@ export async function PUT(req:any) {
 
         // ✅
         return Response.json(
-            { message: "File uploaded successfully :))" },
+            { message: "success" },
             { status: 201 }
         );
     } catch (err) {
@@ -82,7 +82,7 @@ export async function PUT(req:any) {
 export async function GET(req:any) {
     try {
         const product = await productModel.find({}, "-__v").populate("comments")
-        return await Response.json(product)
+        return await Response.json(    { message: "success" ,data:product})
 
     } catch (error) {
         return Response.json({ message: error }, { status: 500 })

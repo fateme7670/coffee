@@ -35,7 +35,7 @@ export async function POST(req: any) {
       }
     );
     return Response.json(
-      { message: "create successfuly", data: comment },
+      { message: "create success", data: comment },
       { status: 201 }
     );
   } catch (error) {
@@ -47,7 +47,7 @@ export async function GET(req:any){
     try {
         connectToDB()
         const comment= await commentModel.find({}, "-__v")
-        return Response.json(comment)
+        return Response.json({message:'success',data:comment})
     } catch (error) {
         return Response.json({ message: error }, { status: 500 });
 

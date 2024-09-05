@@ -1,9 +1,11 @@
 import { ContactsProps } from "@/utils/types";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-
+interface Props{
+  data:any
+}
 export const AddContactFromServer = createAsyncThunk(
   "contact/AddContactFromServer",
-  async (data: ContactsProps) => {
+  async ({data}: Props) => {
     return await fetch(`/api/contact`, {
       method: "POST",
       headers: {

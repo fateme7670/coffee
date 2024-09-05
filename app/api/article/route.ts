@@ -34,7 +34,7 @@ export async function POST(req:any) {
             longdesc,
             img: `http://localhost:3000/articels/${filename}`
         })
-        return Response.json({ message: "create successfuly", data: product }, { status: 201 })
+        return Response.json({ message: "success", data: product }, { status: 201 })
 
     } catch (error) {
         // console.log(error);
@@ -76,7 +76,7 @@ export async function PUT(req:any) {
 export async function GET(req:any) {
     try {
         const article = await articelModel.find({}, "-__v")
-        return await Response.json(article)
+        return await Response.json({message:'success',data:article})
 
     } catch (error) {
         return Response.json({ message: error }, { status: 500 })

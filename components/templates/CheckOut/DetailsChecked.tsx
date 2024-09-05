@@ -7,12 +7,16 @@ import React, { useEffect, useState } from "react";
 import Select from "react-select";
 import CardChecked from "./CardChecked";
 import { authUser } from "@/utils/userhelper";
+import { useAppDispatch } from "@/Redux/hooks";
+import { AddCartFromServer } from "@/Redux/features/cart";
 const stateOptions = stateData();
 const DetailsChecked = () => {
   const router = useRouter();
   const [stateSelectedOption, setStateSelectedOption] = useState<any>(null);
   const [citySelectedOption, setCitySelectedOption] = useState<any>(null);
   const [citySelectorDisabel, setCitySelectorDisabel] = useState(true);
+  const dispatch=useAppDispatch()
+
   const [cityOption, setCityOption] = useState([]);
   const [family, setfamily] = useState("");
   const [name, setname] = useState("");
@@ -77,31 +81,50 @@ const DetailsChecked = () => {
       totalPrice: localPrice,
       
     };
-    const res = await fetch("/api/cart", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(cart),
-    });
-    if (res.status == 201) {
-      swal({
-        title: "your info saved successfully",
-        icon: "success",
-        buttons: "OK",
-      }).then(() => {
-        router.replace("/complate-order");
-      });
-    }
-    if (res.status == 419) {
-      swal({
-        title: "you should login",
-        icon: "error",
-        buttons: "OK",
-      }).then(() => {
-        router.replace("/login-register");
-      });
-    }
+    dispatch(AddCartFromServer({cart})).then(data=>{
+      if (data?.payload?.message==='success'){
+        swal({
+          title: "your info saved successfully",
+          icon: "success",
+          buttons: "OK",
+        }).then(() => {
+          router.replace("/complate-order");
+        });
+      }else{
+        swal({
+          title: "you should login",
+          icon: "error",
+          buttons: "OK",
+        }).then(() => {
+          router.replace("/login-register");
+        });
+      }
+    })
+    // const res = await fetch("/api/cart", {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify(cart),
+    // });
+    // if (res.status == 201) {
+    //   swal({
+    //     title: "your info saved successfully",
+    //     icon: "success",
+    //     buttons: "OK",
+    //   }).then(() => {
+    //     router.replace("/complate-order");
+    //   });
+    // }
+    // if (res.status == 419) {
+    //   swal({
+    //     title: "you should login",
+    //     icon: "error",
+    //     buttons: "OK",
+    //   }).then(() => {
+    //     router.replace("/login-register");
+    //   });
+    // }
     // console.log('res cart',res);
   };
   return (

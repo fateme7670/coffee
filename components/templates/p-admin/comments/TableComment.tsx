@@ -1,5 +1,7 @@
 "use client";
 import Modal from "@/components/modules/modal/Modal";
+import { AcceptcommentFromServer, AnswercommentFromServer, BancommentFromServer, DeleteCommentFromServer, EditCommentFromServer, RejectcommentFromServer } from "@/Redux/features/comment";
+import { useAppDispatch } from "@/Redux/hooks";
 import { showSwal } from "@/utils/helper";
 import { CommentProps } from "@/utils/types";
 import { useRouter } from "next/navigation";
@@ -13,6 +15,7 @@ const TableComment = ({ comments }: Props) => {
   const router = useRouter();
   const [showModal, setShowModal] = useState(false);
   const [data, setdata] = useState<CommentProps | null>(null);
+  const dispatch=useAppDispatch()
 
   const hideModal = () => setShowModal(false);
 
@@ -25,40 +28,62 @@ const TableComment = ({ comments }: Props) => {
     showSwal(body, "", "خوندم");
   };
   const acceptcomment = async (commentid: string) => {
-    const res = await fetch("/api/comment/accept", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ id: commentid }),
-    });
-    if (res.status === 200) {
-      swal({
-        title: "accpeted comment",
-        icon: "success",
-        buttons: "OK",
-      }).then(() => {
-        router.refresh();
-      });
-    }
+    dispatch(AcceptcommentFromServer({id:commentid})).then(data=>{
+      if (data?.payload?.message==='success'){
+        swal({
+          title: "accpeted comment",
+          icon: "success",
+          buttons: "OK",
+        }).then(() => {
+          router.refresh();
+        });
+      }
+    })
+    // const res = await fetch("/api/comment/accept", {
+    //   method: "PUT",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify({ id: commentid }),
+    // });
+    // if (res.status === 200) {
+    //   swal({
+    //     title: "accpeted comment",
+    //     icon: "success",
+    //     buttons: "OK",
+    //   }).then(() => {
+    //     router.refresh();
+    //   });
+    // }
   };
   const rejectcomment = async (commentid: string) => {
-    const res = await fetch("/api/comment/reject", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ id: commentid }),
-    });
-    if (res.status === 200) {
-      swal({
-        title: "accpeted comment",
-        icon: "success",
-        buttons: "OK",
-      }).then(() => {
-        router.refresh();
-      });
-    }
+    dispatch(RejectcommentFromServer({id:commentid})).then(data=>{
+      if (data?.payload?.message==='success'){
+        swal({
+          title: "reject comment",
+          icon: "success",
+          buttons: "OK",
+        }).then(() => {
+          router.refresh();
+        });
+      }
+    })
+    // const res = await fetch("/api/comment/reject", {
+    //   method: "PUT",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify({ id: commentid }),
+    // });
+    // if (res.status === 200) {
+    //   swal({
+    //     title: "accpeted comment",
+    //     icon: "success",
+    //     buttons: "OK",
+    //   }).then(() => {
+    //     router.refresh();
+    //   });
+    // }
   };
   const updateComment = async (id: string) => {
     // Validation (You) ✅👇
@@ -67,25 +92,36 @@ const TableComment = ({ comments }: Props) => {
       body,
       email,
     };
-    const res = await fetch(`/api/comment/${id}`, {
-      method: "PUT",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(comment),
-    });
-    console.log("Res ->", res);
-    if (res.status === 200) {
+    dispatch(EditCommentFromServer({data:comment,id})).then(data=>{
+      if (data?.payload?.message==='success'){
+        swal({
+          title: "کامنت مورد نظر با موفقیت اپدیت شد",
+          icon: "success",
+          buttons: "فهمیدم",
+        }).then(() => {
+          router.refresh();
+        });
+      }
+    })
+    // const res = await fetch(`/api/comment/${id}`, {
+    //   method: "PUT",
+    //   headers: {
+    //     "content-type": "application/json",
+    //   },
+    //   body: JSON.stringify(comment),
+    // });
+    // console.log("Res ->", res);
+    // if (res.status === 200) {
   
 
-      swal({
-        title: "کامنت مورد نظر با موفقیت اپدیت شد",
-        icon: "success",
-        buttons: "فهمیدم",
-      }).then(() => {
-        router.refresh();
-      });
-    }
+    //   swal({
+    //     title: "کامنت مورد نظر با موفقیت اپدیت شد",
+    //     icon: "success",
+    //     buttons: "فهمیدم",
+    //   }).then(() => {
+    //     router.refresh();
+    //   });
+    // }
   };
   const deleteComments = async (id: string) => {
     // console.log('hi');
@@ -95,19 +131,31 @@ const TableComment = ({ comments }: Props) => {
       buttons: ["no", "yes"],
     }).then(async (result) => {
       if (result) {
-        const res = await fetch(`/api/comment/${id}`, {
-          method: "DELETE",
-        });
-        // console.log(res);
-        if (res.status === 200) {
-          swal({
-            title: "deleted successfully",
-            icon: "success",
-            buttons: "OK",
-          }).then(() => {
-            router.refresh();
-          });
-        }
+dispatch(DeleteCommentFromServer({id})).then(data=>{
+  if (data?.payload?.message==='success'){
+    swal({
+      title: "deleted successfully",
+      icon: "success",
+      buttons: "OK",
+    }).then(() => {
+      router.refresh();
+    });
+  }
+})
+
+        // const res = await fetch(`/api/comment/${id}`, {
+        //   method: "DELETE",
+        // });
+        // // console.log(res);
+        // if (res.status === 200) {
+        //   swal({
+        //     title: "deleted successfully",
+        //     icon: "success",
+        //     buttons: "OK",
+        //   }).then(() => {
+        //     router.refresh();
+        //   });
+        // }
       }
     });
   };
@@ -118,22 +166,36 @@ const TableComment = ({ comments }: Props) => {
       buttons: ["نه", "اره"],
     }).then(async (result) => {
       if (result) {
-        const res = await fetch("/api/comment/ban", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email, phone }),
-        });
-        if (res.status === 200) {
-          swal({
-            title: "کاربر با موفقیت بن شد:))",
-            icon: "success",
-            buttons: "OK",
-          }).then(() => {
-            router.refresh();
-          });
+        const data={
+          email, phone
         }
+        dispatch(BancommentFromServer({data })).then(data=>{
+          if (data?.payload?.message==='success'){
+            swal({
+              title: "کاربر با موفقیت بن شد:))",
+              icon: "success",
+              buttons: "OK",
+            }).then(() => {
+              router.refresh();
+            });
+          }
+        })
+        // const res = await fetch("/api/comment/ban", {
+        //   method: "POST",
+        //   headers: {
+        //     "Content-Type": "application/json",
+        //   },
+        //   body: JSON.stringify({ email, phone }),
+        // });
+        // if (res.status === 200) {
+        //   swal({
+        //     title: "کاربر با موفقیت بن شد:))",
+        //     icon: "success",
+        //     buttons: "OK",
+        //   }).then(() => {
+        //     router.refresh();
+        //   });
+        // }
       }
     });
   };
@@ -149,16 +211,22 @@ const TableComment = ({ comments }: Props) => {
         body: answercomment,
         commentId: comment._id,
       };
-      const res = await fetch("/api/comment/awnser", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(awnser),
-      });
-      if (res.status === 201) {
-        showSwal("tiket answerd sucessfully", "success", "Ok");
-      }
+      dispatch(AnswercommentFromServer({data:awnser})).then(data=>{
+        if (data?.payload?.message==='success'){
+          showSwal("tiket answerd sucessfully", "success", "Ok");
+
+        }
+      })
+      // const res = await fetch("/api/comment/awnser", {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify(awnser),
+      // });
+      // if (res.status === 201) {
+      //   showSwal("tiket answerd sucessfully", "success", "Ok");
+      // }
     });
   };
   return (

@@ -51,9 +51,9 @@ export interface CommentProps {
 
 export interface WishlistProps {
   id?: string;
-  _id: string;
-  user?: UserProps;
-  product?: ProductProps;
+  _id?: string;
+  user?: UserProps | string;
+  product?: ProductProps | string;
 }
 export interface CardProps {
   id?: string;

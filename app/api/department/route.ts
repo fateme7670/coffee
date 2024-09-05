@@ -13,7 +13,7 @@ export async function POST(req: any) {
       title,
     });
     return Response.json(
-      { message: "deparment  successfuly" },
+      { message: "success" },
       { status: 201 }
     );
   } catch (error) {
@@ -23,5 +23,5 @@ export async function POST(req: any) {
 export async function GET() {
   connectToDB();
   const department = await departmentmodel.find({});
-  return Response.json(department);
+  return Response.json( { message: "success" ,data:department});
 }

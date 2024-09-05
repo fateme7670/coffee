@@ -35,7 +35,7 @@ export async function POST(req:any) {
       phone,
       message
     })
-    return Response.json({ message: "contact added successfuly" },{status:201 });
+    return Response.json({ message: "success" },{status:201 });
   } catch (error) {
     return Response.json({ message: error },{status:500 });
 

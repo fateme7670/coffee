@@ -13,6 +13,7 @@
     "@nextui-org/react": "^2.4.6",
     "@nextui-org/slider": "^2.2.15",
     "@nextui-org/table": "^2.0.39",
+    "@radix-ui/react-toast": "^1.2.1",
     "@reduxjs/toolkit": "^2.2.7",
     "@tanstack/react-table": "^8.20.5",
     "aos": "^2.3.4",

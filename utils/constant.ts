@@ -78,6 +78,12 @@ export const infoTabs = [
         label: "تخفیفات",
       },
    
+    {
+        imgURL: "/assets/comment.png",
+        route: "/article",
+        label: "مقالات",
+      },
+   
   ];
   
   

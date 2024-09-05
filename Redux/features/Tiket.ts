@@ -1,10 +1,12 @@
 import {CommentProps, ProductProps, TiketProps } from "@/utils/types";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-
+interface Props{
+  data:TiketProps
+}
 
 export const AddTiketFromServer = createAsyncThunk(
   "tiket/AddTiketFromServer",
-  async (data: TiketProps) => {
+  async ({data}: Props) => {
     return await fetch(`/api/tiket`, {
       method: "POST",
       headers: {
@@ -17,19 +19,20 @@ export const AddTiketFromServer = createAsyncThunk(
   }
 );
 
-
+interface AnserProps{
+  awnser:TiketProps
+}
 export const AnswerTiketFromServer = createAsyncThunk(
   "tiket/AnswerTiketFromServer",
-  async (data:TiketProps,id) => {
-    return await fetch(`/api/tiket/${id}`, {
-     method:'POST',
-     headers:{
-      'Content-Type':'application/json'
-    },
-    body:JSON.stringify(data)
-
+  async ({awnser}:AnserProps) => {
+    return await fetch('/api/tiket/answer', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(awnser)
     })
-      .then((res) => res.json())
+    .then((res) => res.json())
       .then((data) => data);
   }
 );

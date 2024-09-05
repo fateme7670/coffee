@@ -1,4 +1,6 @@
 "use client";
+import { EditPassUserFromServer, EditUserFromServer } from "@/Redux/features/users";
+import { useAppDispatch } from "@/Redux/hooks";
 import { verifypasshash } from "@/utils/auth";
 import { showSwal } from "@/utils/helper";
 import Image from "next/image";
@@ -21,6 +23,7 @@ const Details = ({ id, name, email, phone, img, password }: Props) => {
   const [phoneNumber, setPhoneNumber] = useState(phone);
   const [pasword, setPassword] = useState<string>("");
   const [image, setImg] = useState<string>("");
+  const dispatch=useAppDispatch()
   const deleteProfile = async () => {
     swal({
       title: "آیا از حذف پروفایل اطمینان دارید؟",
@@ -29,6 +32,7 @@ const Details = ({ id, name, email, phone, img, password }: Props) => {
     }).then(async (result) => {
       const formData = new FormData();
       formData.append("img", "");
+
       const res = await fetch(`/api/user/img`, {
         method: "PUT",
         body: formData,
@@ -58,20 +62,32 @@ const Details = ({ id, name, email, phone, img, password }: Props) => {
         const pas = {
           password: pasword,
         };
-        const res = await fetch(`/api/user/password/${id}`, {
-          method: "POST",
-          body: JSON.stringify(pas),
-        });
+        dispatch(EditPassUserFromServer({data:pas,id})).then(data=>{
+          if (data?.payload?.message==='success'){
+            swal({
+              title: "رمز با موفقیت عوض شد",
+              icon: "success",
+              buttons: "فهمیدم",
+            }).then(() => {
+              router.refresh();
+            });
+          }
+        })
 
-        if (res.status === 200) {
-          swal({
-            title: "رمز با موفقیت عوض شد",
-            icon: "success",
-            buttons: "فهمیدم",
-          }).then(() => {
-            router.refresh();
-          });
-        }
+        // const res = await fetch(`/api/user/password/${id}`, {
+        //   method: "POST",
+        //   body: JSON.stringify(pas),
+        // });
+
+        // if (res.status === 200) {
+          // swal({
+          //   title: "رمز با موفقیت عوض شد",
+          //   icon: "success",
+          //   buttons: "فهمیدم",
+          // }).then(() => {
+          //   router.refresh();
+          // });
+        // }
       }
     });
   };
@@ -83,20 +99,35 @@ const Details = ({ id, name, email, phone, img, password }: Props) => {
     formData.append("phone", phoneNumber);
     formData.append("password", password);
     formData.append("img", image);
-    const res = await fetch(`/api/user/${id}`, {
-      method: "POST",
-      body: formData,
-    });
-
-    if (res.status === 200) {
-      swal({
-        title: "محصول مورد نظر با موفقیت ایجاد شد",
+    dispatch(EditUserFromServer({formData,id})).then((data)=>{
+      console.log(data);
+      
+      if (data?.payload?.message==='success'){ 
+         swal({
+        title: "کاربر با موقفیت اپدیت شد",
         icon: "success",
         buttons: "فهمیدم",
       }).then(() => {
         router.refresh();
       });
     }
+    })
+
+
+    // const res = await fetch(`/api/user/${id}`, {
+    //   method: "POST",
+    //   body: formData,
+    // });
+
+    // if (res.status === 200) {
+    //   swal({
+    //     title: "محصول مورد نظر با موفقیت ایجاد شد",
+    //     icon: "success",
+    //     buttons: "فهمیدم",
+    //   }).then(() => {
+    //     router.refresh();
+    //   });
+    // }
   };
 
   return (

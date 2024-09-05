@@ -1,5 +1,7 @@
 "use client";
 import Modal from "@/components/modules/modal/Modal";
+import { BanUserFromServer, EditRoleUserFromServer, EditUserFromServer, removeUserFromServer } from "@/Redux/features/users";
+import { useAppDispatch } from "@/Redux/hooks";
 import { UserProps } from "@/utils/types";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
@@ -14,7 +16,7 @@ const UserTable = ({ users }: Props) => {
   const [showModal, setShowModal] = useState(false);
   const [data, setdata] = useState<string>("");
   const hideModal = () => setShowModal(false);
-
+  const dispatch=useAppDispatch()
   const [email, setEmail] = useState<string>("");
   const [phone, setPhone] = useState<string>("");
   const [name, setName] = useState<string>("");
@@ -22,13 +24,8 @@ const UserTable = ({ users }: Props) => {
   const [img, setImg] = useState<any>({});
 
   const changeRole = async (userID: string) => {
-    const res = await fetch("/api/user/role", {
-      method: "PUT",
-      headers: { "content-Type": "application/json" },
-      body: JSON.stringify({ id: userID }),
-    });
-    if (res.status == 200) {
-      swal({
+    dispatch(EditRoleUserFromServer({id:userID})).then(data=>{
+      if (data?.payload?.message==='success'){  swal({
         title: "changed Role",
         icon: "success",
         buttons: "OK",
@@ -36,6 +33,21 @@ const UserTable = ({ users }: Props) => {
         router.refresh();
       });
     }
+    })
+    // const res = await fetch("/api/user/role", {
+    //   method: "PUT",
+    //   headers: { "content-Type": "application/json" },
+    //   body: JSON.stringify({ id: userID }),
+    // });
+    // if (res.status == 200) {
+    //   swal({
+    //     title: "changed Role",
+    //     icon: "success",
+    //     buttons: "OK",
+    //   }).then(() => {
+    //     router.refresh();
+    //   });
+    // }
   };
   const updateUser = async (userID: string) => {
     const formData = new FormData();
@@ -44,19 +56,30 @@ const UserTable = ({ users }: Props) => {
     formData.append("email", email);
     formData.append("password", password);
     formData.append("img", img);
-    const res = await fetch(`/api/user/${userID}`, {
-      method: "POST",
-      body: formData,
-    });
-    if (res.status == 200) {
-      swal({
-        title: "changed user",
-        icon: "success",
-        buttons: "OK",
-      }).then(() => {
-        router.refresh();
-      });
-    }
+    dispatch(EditUserFromServer({formData,id:userID})).then(data=>{
+      if (data?.payload?.message==='success'){
+        swal({
+          title: "changed user",
+          icon: "success",
+          buttons: "OK",
+        }).then(() => {
+          router.refresh();
+        });
+      }
+    })
+    // const res = await fetch(`/api/user/${userID}`, {
+    //   method: "POST",
+    //   body: formData,
+    // });
+    // if (res.status == 200) {
+    //   swal({
+    //     title: "changed user",
+    //     icon: "success",
+    //     buttons: "OK",
+    //   }).then(() => {
+    //     router.refresh();
+    //   });
+    // }
   };
   const banedUser = async (email: string, phone: string) => {
     swal({
@@ -65,22 +88,36 @@ const UserTable = ({ users }: Props) => {
       buttons: ["نه", "اره"],
     }).then(async (result) => {
       if (result) {
-        const res = await fetch("/api/user/ban", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email, phone }),
-        });
-        if (res.status === 200) {
-          swal({
-            title: "کاربر با موفقیت بن شد:))",
-            icon: "success",
-            buttons: "OK",
-          }).then(() => {
-            router.refresh();
-          });
+        const data={
+          email, phone 
         }
+        dispatch(BanUserFromServer({data})).then(data=>{
+          if (data?.payload?.message==='success'){
+            swal({
+              title: "کاربر با موفقیت بن شد:))",
+              icon: "success",
+              buttons: "OK",
+            }).then(() => {
+              router.refresh();
+            });
+          }
+        })
+        // const res = await fetch("/api/user/ban", {
+        //   method: "POST",
+        //   headers: {
+        //     "Content-Type": "application/json",
+        //   },
+        //   body: JSON.stringify({ email, phone }),
+        // });
+        // if (res.status === 200) {
+        //   swal({
+        //     title: "کاربر با موفقیت بن شد:))",
+        //     icon: "success",
+        //     buttons: "OK",
+        //   }).then(() => {
+        //     router.refresh();
+        //   });
+        // }
       }
     });
   };
@@ -92,19 +129,30 @@ const UserTable = ({ users }: Props) => {
     }).then(async (result) => {
       // console.log(result, userID);
       if (result) {
-        const res = await fetch(`/api/user/${userID}`, {
-          method: "DELETE",
-        });
-        // console.log(res);
-        if (res.status == 200) {
-          swal({
-            title: "deleted successfully:))",
-            icon: "success",
-            buttons: "OK",
-          }).then(() => {
-            router.refresh();
-          });
-        }
+        dispatch(removeUserFromServer({id:userID})).then(data=>{
+          if (data?.payload?.message==='success'){
+            swal({
+              title: "deleted successfully:))",
+              icon: "success",
+              buttons: "OK",
+            }).then(() => {
+              router.refresh();
+            });
+          }
+        })
+        // const res = await fetch(`/api/user/${userID}`, {
+        //   method: "DELETE",
+        // });
+        // // console.log(res);
+        // if (res.status == 200) {
+        //   swal({
+        //     title: "deleted successfully:))",
+        //     icon: "success",
+        //     buttons: "OK",
+        //   }).then(() => {
+        //     router.refresh();
+        //   });
+        // }
       }
     });
   };

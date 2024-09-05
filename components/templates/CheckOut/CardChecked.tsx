@@ -1,4 +1,6 @@
 "use client";
+import { UsesDiscountFromServer } from "@/Redux/features/discount";
+import { useAppDispatch } from "@/Redux/hooks";
 import { showSwal } from "@/utils/helper";
 import { CardProps } from "@/utils/types";
 import Link from "next/link";
@@ -9,45 +11,53 @@ interface Props {
 const CardChecked = ({ addcart }: Props) => {
   const [showZarinPallAlert, setShowZarinPallAlert] = useState(false);
   const [showDiscountForm, setShowDiscountForm] = useState(false);
+  const dispatch = useAppDispatch();
 
   const [cart, setCart] = useState<CardProps[]>([]);
   const [code, setcode] = useState<any>("");
   const [disablebtn, setdisablebtn] = useState(false);
   const [tottalprice, settottalprice] = useState(0);
   const [finalprice, setfinalprice] = useState(0);
-const [acceptinfo, setAcceptinfo] = useState<boolean>(true);
+  const [acceptinfo, setAcceptinfo] = useState<boolean>(true);
   useEffect(() => {
     const basket = JSON.parse(localStorage.getItem("card")) || [];
-    const totalPrices = JSON.parse(localStorage.getItem("price")) || '';
-    setfinalprice(totalPrices)
-    settottalprice(totalPrices-30000)
+    const totalPrices = JSON.parse(localStorage.getItem("price")) || "";
+    setfinalprice(totalPrices);
+    settottalprice(totalPrices - 30000);
     setCart(basket);
   }, []);
 
- 
-
   const addDiscount = async () => {
-    const res = await fetch("/api/discount/uses", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ code }),
-    });
-    if (res.status === 200) {
-      setdisablebtn(true);
-      const data = await res.json();
+    dispatch(UsesDiscountFromServer({ code })).then((data) => {
+      if (data?.payload?.message === "success") {
+        console.log('data p',data);
+        
+        setdisablebtn(true);
+        const dataprice = data.payload?.data;
 
-      const newprice = tottalprice - (tottalprice * data.percent) / 100;
-      settottalprice(newprice);
-      setfinalprice(newprice + 30000+16927);
-localStorage.setItem('price',JSON.stringify(newprice+ 30000+16927))
-      return showSwal("کد تخفیف اعمال شد", "success", "OK");
-    } else if (res.status === 422) {
-      return showSwal("محدودت کد تخفیف به اتمام رسیده:((", "error", "TRY");
-    } else {
-      return showSwal("کد نامعتبر است", "error", "TRY");
-    }
+        const newprice = tottalprice - (tottalprice * dataprice.percent) / 100;
+        settottalprice(newprice);
+        setfinalprice(newprice + 30000 + 16927);
+        localStorage.setItem("price", JSON.stringify(newprice + 30000 + 16927));
+        return showSwal("کد تخفیف اعمال شد", "success", "OK");
+      } 
+      // else {
+      //   return showSwal("محدودت کد تخفیف به اتمام رسیده:((", "error", "TRY");
+      // }
+       else {
+        return showSwal("کد نامعتبر است", "error", "TRY");
+
+      }
+    });
+
+    // const res = await fetch("/api/discount/uses", {
+    //   method: "PUT",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify({ code }),
+    // });
+    // if (res.status === 200) {
   };
   return (
     <section className="relative">
@@ -59,24 +69,21 @@ localStorage.setItem('price',JSON.stringify(newprice+ 30000+16927))
             <p>جمع جزء</p>
           </div>
           <hr />
-          {cart.map(item=>(
-          <div className="flex border-b pb-3 my-5 items-center justify-between gap-5">
-           
-<>
-<div className="basis-1/2">
-              <p className="text-gray-1">
-               {item.name}
-              </p>
+          {cart.map((item) => (
+            <div className="flex border-b pb-3 my-5 items-center justify-between gap-5">
+              <>
+                <div className="basis-1/2">
+                  <p className="text-gray-1">{item.name}</p>
+                </div>
+                <div className="basis-1/2">
+                  <p className="text-gray-1 text-end">
+                    {item.price?.toLocaleString()} تومان
+                  </p>
+                </div>
+              </>
             </div>
-            <div className="basis-1/2">
-              <p className="text-gray-1 text-end">{item.price?.toLocaleString()} تومان</p>
-            </div>
-</>
-        
-        
-          </div>
-              ))}
-       
+          ))}
+
           <div className="flex my-5 items-center justify-between gap-5">
             <p>جمع جزء</p>
             <p>{tottalprice.toLocaleString()}تومان</p>
@@ -98,7 +105,9 @@ localStorage.setItem('price',JSON.stringify(newprice+ 30000+16927))
               <p className="text-heading4-bold">مجموع</p>
             </div>
             <div className="basis-1/2 text-end">
-              <p className="text-heading4-bold">{finalprice.toLocaleString()} تومان</p>
+              <p className="text-heading4-bold">
+                {finalprice.toLocaleString()} تومان
+              </p>
               <p> (شامل 16,927 تومان ارزش افزوده)</p>
             </div>
           </div>
@@ -188,10 +197,13 @@ localStorage.setItem('price',JSON.stringify(newprice+ 30000+16927))
           </div>
           <hr />
           <div className="flex gap-4 my-5">
-            <input    
-           
-        onChange={(e)=>setAcceptinfo((prev:boolean)=>!prev)}
-         className="accent-black" type="checkbox" name="" id="" />
+            <input
+              onChange={(e) => setAcceptinfo((prev: boolean) => !prev)}
+              className="accent-black"
+              type="checkbox"
+              name=""
+              id=""
+            />
             <p>
               {" "}
               من<strong> شرایط و مقررات</strong> سایت را خوانده ام و آن را می
@@ -199,15 +211,14 @@ localStorage.setItem('price',JSON.stringify(newprice+ 30000+16927))
             </p>
           </div>
         </div>
-      
-          <button
-            onClick={addcart}
-            disabled={acceptinfo}
-            className="px-4 my-5 py-3 bg-green-3 w-full rounded-md hover:bg-redprimary-500 text-white text-small-medium"
-          >
-            ثبت سفارش
-          </button>
 
+        <button
+          onClick={addcart}
+          disabled={acceptinfo}
+          className="px-4 my-5 py-3 bg-green-3 w-full rounded-md hover:bg-redprimary-500 text-white text-small-medium"
+        >
+          ثبت سفارش
+        </button>
       </div>
     </section>
   );

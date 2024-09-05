@@ -31,7 +31,7 @@ export async function POST(req:any) {
             hasAnswer: false,
             maintiket: tiketId
         })
-        return Response.json({ message: 'tiket added successfuly' }, { status: 201 })
+        return Response.json({ message: 'success' }, { status: 201 })
 
     } catch (error) {
         return Response.json({ message: error }, { status: 500 })

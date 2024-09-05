@@ -26,15 +26,15 @@ export const AllwishlistFromServer = createAsyncThunk(
       .then((data) => data);
   }
 );
+interface DeleteProps{
+  id:string
+}
 export const DeletewishlistFromServer = createAsyncThunk(
   "wishlist/DeletewishlistFromServer",
-  async (id: string) => {
+  async ({id}: DeleteProps) => {
     return await fetch(`/api/wishlist/${id}`, {
       method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-     
+      
     })
       .then((res) => res.json())
       .then((data) => data);

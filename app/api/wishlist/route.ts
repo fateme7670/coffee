@@ -9,7 +9,7 @@ export async function POST(req: any) {
     const wish= await wishlistmodel.findOne({user,product})
     if (!wish) {
         await wishlistmodel.create({user,product})
-        return Response.json({message:"wishlist create successsfuly"},{status:201})
+        return Response.json({message:"success"},{status:201})
 
 
     }else{

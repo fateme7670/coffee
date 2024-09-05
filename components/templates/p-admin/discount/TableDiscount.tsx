@@ -1,5 +1,7 @@
 'use client'
 import { HeaderPanel } from '@/components/modules';
+import { DeleteDiscountFromServer } from '@/Redux/features/discount';
+import { useAppDispatch } from '@/Redux/hooks';
 import { DiscountProps } from '@/utils/types';
 import { useRouter } from 'next/navigation';
 import React from 'react';
@@ -9,6 +11,7 @@ interface Props{
 }
 const TableDiscount = ({discounts}:Props) => {
   const router = useRouter()
+  const dispatch=useAppDispatch()
   const removeDiscount = async (userID:string) => {
 
 
@@ -19,21 +22,33 @@ const TableDiscount = ({discounts}:Props) => {
     }).then(async (result) => {
       // console.log(result, userID);
       if (result) {
-        const res = await fetch(`/api/discount/${userID}`, {
-          method: 'DELETE',
-
-        })
-        // console.log(res);
-        if (res.status == 200) {
-          swal({
-            title: 'deleted successfully:))',
-            icon: 'success',
-            buttons: 'OK'
-          }).then(() => {
-            router.refresh()
+        dispatch(DeleteDiscountFromServer({id:userID})).then(data=>{
+          if (data?.payload?.message==='success'){
+            swal({
+              title: 'deleted successfully:))',
+              icon: 'success',
+              buttons: 'OK'
+            }).then(() => {
+              router.refresh()
+            }
+            )
           }
-          )
-        }
+        })
+        // const res = await fetch(`/api/discount/${userID}`, {
+        //   method: 'DELETE',
+
+        // })
+        // // console.log(res);
+        // if (res.status == 200) {
+        //   swal({
+        //     title: 'deleted successfully:))',
+        //     icon: 'success',
+        //     buttons: 'OK'
+        //   }).then(() => {
+        //     router.refresh()
+        //   }
+        //   )
+        // }
       }
     });
   };

@@ -1,6 +1,8 @@
 import { UserProps } from "@/utils/types";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-
+interface RoleProps{
+  id:string
+}
 export const getUsersFromServer = createAsyncThunk(
   "users/getUsersFromServer",
   async () => {
@@ -12,26 +14,22 @@ export const getUsersFromServer = createAsyncThunk(
 
 export const removeUserFromServer = createAsyncThunk(
   "users/removeUsersFromServer",
-  async (id) => {
+  async ({id}:RoleProps) => {
     return fetch(`/api/user/${id}`, {
       method: "DELETE",
-      headers: {
-        "Access-Control-Allow-Headers": "Content-Type",
-        "Access-Control-Allow-Origin": "*",
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Methods": "OPTIONS,POST,GET,PATCH",
-      },
+      
     })
       .then((res) => res.json())
       .then((data) => data);
   }
 );
-
-
+interface BanProps{
+  data: Object
+}
 
 export const BanUserFromServer = createAsyncThunk(
   "users/BanUserFromServer",
-  async (data: Object) => {
+  async ({data}: BanProps) => {
     return await fetch(`/api/user/ban`, {
       method: "POST",
       headers: {
@@ -43,11 +41,33 @@ export const BanUserFromServer = createAsyncThunk(
       .then((data) => data);
   }
 );
-
+interface Props {
+ 
+  id: string;
+  formData:any 
+}
 export const EditUserFromServer = createAsyncThunk(
   "users/EditUserFromServer",
-  async (data: UserProps, id) => {
+  async ({formData, id}:Props) => {
     return await fetch(`/api/user/${id}`, {
+      method: "POST",
+   
+      body: formData,
+    })
+      .then((res) => res.json())
+      .then((data) => data);
+  }
+);
+interface PasProps {
+  data: string | any;
+  id: string;
+
+}
+
+export const EditPassUserFromServer = createAsyncThunk(
+  "users/EditPassUserFromServer",
+  async ({ data, id }: PasProps) => {
+    return await fetch(`/api/user/password/${id}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -58,23 +78,10 @@ export const EditUserFromServer = createAsyncThunk(
       .then((data) => data);
   }
 );
-export const EditPassUserFromServer = createAsyncThunk(
-  "users/EditPassUserFromServer",
-  async (password: string, id) => {
-    return await fetch(`/api/user/password/${id}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(password),
-    })
-      .then((res) => res.json())
-      .then((data) => data);
-  }
-);
+
 export const EditRoleUserFromServer = createAsyncThunk(
   "users/EditRoleUserFromServer",
-  async (id: string) => {
+  async ({id}: RoleProps) => {
     return await fetch(`/api/user/role`, {
       method: "PUT",
       headers: {

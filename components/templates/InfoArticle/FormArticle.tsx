@@ -1,4 +1,6 @@
 'use client'
+import { FormArticleFromServer } from "@/Redux/features/article";
+import { useAppDispatch } from "@/Redux/hooks";
 import { verifyemail } from "@/utils/auth";
 import { showSwal } from "@/utils/helper";
 import { Checkbox } from "@nextui-org/react";
@@ -9,6 +11,8 @@ interface Props {
 }
 const FormArticle = ({ id }: Props) => {
   const router = useRouter();
+  const dispatch=useAppDispatch()
+
   // console.log('id', id);
   const [content, setcontent] = useState("");
   const [name, setname] = useState("");
@@ -38,28 +42,46 @@ const FormArticle = ({ id }: Props) => {
       email,
       website,
     };
-    const res = await fetch(`/api/article/${id}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(article),
-    });
-    if (res.status === 404) {
-      showSwal("email is not verify", "error", "ok");
-    } else if (res.status === 201) {
-      swal({
-        title: "your comment added successfully",
-        icon: "success",
-        buttons: "OK",
-      }).then(() => {
-        setcontent("");
-        setname("");
-        setemail("");
-        setwebsite("");
-        router.refresh();
-      });
-    }
+    dispatch(FormArticleFromServer({data:article,id})).then(data=>{
+  
+      if (data?.payload?.message==='success'){
+        swal({
+          title: "your comment added successfully",
+          icon: "success",
+          buttons: "OK",
+        }).then(() => {
+          setcontent("");
+          setname("");
+          setemail("");
+          setwebsite("");
+          router.refresh();
+        });
+      }else{
+        return  showSwal("email is not verify", "error", "ok");
+      }
+    })
+    // const res = await fetch(`/api/article/${id}`, {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify(article),
+    // });
+    // if (res.status === 404) {
+    //   showSwal("email is not verify", "error", "ok");
+    // } else if (res.status === 201) {
+    //   swal({
+    //     title: "your comment added successfully",
+    //     icon: "success",
+    //     buttons: "OK",
+    //   }).then(() => {
+    //     setcontent("");
+    //     setname("");
+    //     setemail("");
+    //     setwebsite("");
+    //     router.refresh();
+    //   });
+    // }
   };
   return (
     <section className="container mx-5 mt-10">

@@ -17,7 +17,7 @@ export async function GET(req: any) {
       { email: tokenPyload.email },
       "-password -refreshtoken -__v"
     );
-    return Response.json(user);
+    return Response.json({message:'success',data:user});
     }else{
         return Response.json({message: "not user",data:null},{status:419})
   

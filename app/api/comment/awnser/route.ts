@@ -41,7 +41,7 @@ export async function POST(req: any) {
       }
     );
     return Response.json(
-      { message: "tiket added successfuly" },
+      { message: "success" },
       { status: 201 }
     );
   } catch (error) {

@@ -1,4 +1,4 @@
-import {CommentProps, ProductProps } from "@/utils/types";
+import {CommentProps, Object, ProductProps } from "@/utils/types";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 
@@ -16,6 +16,37 @@ export const AddcommentFromServer = createAsyncThunk(
       .then((data) => data);
   }
 );
+interface EditProps{
+  id:string
+  data:CommentProps
+}
+export const EditCommentFromServer = createAsyncThunk(
+  "comments/EditCommentFromServer",
+  async ({data,id}: EditProps) => {
+    return await fetch(`/api/comment/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+      .then((res) => res.json())
+      .then((data) => data);
+  }
+);
+export const DeleteCommentFromServer = createAsyncThunk(
+  "comment/DeleteCommentFromServer",
+  async ({id}: Props) => {
+    return await fetch(`/api/comment/${id}`, {
+      method: "DELETE",
+     
+     
+    })
+      .then((res) => res.json())
+      .then((data) => data);
+  }
+);
+
 export const AllcommentFromServer = createAsyncThunk(
   "comments/AllcommentFromServer",
   async () => {
@@ -26,15 +57,18 @@ export const AllcommentFromServer = createAsyncThunk(
       .then((data) => data);
   }
 );
+interface Props{
+  id:string
+}
 export const AcceptcommentFromServer = createAsyncThunk(
   "comments/AcceptcommentFromServer",
-  async (id:string) => {
+  async ({id}:Props) => {
     return await fetch(`/api/comment/accept`, {
      method:'PUT',
      headers:{
       'Content-Type':'application/json'
     },
-    body:JSON.stringify({id})
+    body:JSON.stringify({ id})
 
     })
       .then((res) => res.json())
@@ -43,7 +77,7 @@ export const AcceptcommentFromServer = createAsyncThunk(
 );
 export const RejectcommentFromServer = createAsyncThunk(
   "comments/RejectcommentFromServer",
-  async (id:string) => {
+  async ({id}:Props) => {
     return await fetch(`/api/comment/reject`, {
      method:'PUT',
      headers:{
@@ -56,9 +90,12 @@ export const RejectcommentFromServer = createAsyncThunk(
       .then((data) => data);
   }
 );
+interface ObjectProps{
+  data:Object
+}
 export const BancommentFromServer = createAsyncThunk(
   "comments/BancommentFromServer",
-  async (data:Object) => {
+  async ({data}:ObjectProps) => {
     return await fetch(`/api/comment/ban`, {
      method:'POST',
      headers:{
@@ -71,9 +108,12 @@ export const BancommentFromServer = createAsyncThunk(
       .then((data) => data);
   }
 );
+interface AnswerProps{
+  data:CommentProps
+}
 export const AnswercommentFromServer = createAsyncThunk(
   "comments/AnswercommentFromServer",
-  async (data:CommentProps) => {
+  async ({data}:AnswerProps) => {
     return await fetch(`/api/comment/awnser`, {
      method:'POST',
      headers:{
@@ -96,6 +136,9 @@ const slice = createSlice({
     builder.addCase(AddcommentFromServer.fulfilled, (state , action) => {
       return [...state];
     });
+    builder.addCase(EditCommentFromServer.fulfilled, (state , action) => {
+      return [...state];
+    });
     builder.addCase(AllcommentFromServer.fulfilled, (state , action) => {
       return action.payload;
     });
@@ -105,7 +148,9 @@ const slice = createSlice({
     builder.addCase(RejectcommentFromServer.fulfilled, (state , action) => {
       return [...state];
     });
-  
+    builder.addCase(DeleteCommentFromServer.fulfilled, (state , action) => {
+      return [...state];
+    });
     builder.addCase(BancommentFromServer.fulfilled, (state, action) => [...state]);
     builder.addCase(AnswercommentFromServer.fulfilled, (state, action) => [...state]);
   },

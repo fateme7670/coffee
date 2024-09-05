@@ -16,7 +16,7 @@ export async function POST(req:any) {
             title,
             department
         })
-        return Response.json({ message: 'deparment  successfuly' }, { status: 201 })
+        return Response.json({ message: 'success' }, { status: 201 })
 
 
     } catch (error) {

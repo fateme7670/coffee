@@ -1,6 +1,8 @@
 "use client";
 import { HeaderPanel } from "@/components/modules";
 import Modal from "@/components/modules/modal/Modal";
+import { DeleteproductFromServer, EditproductFromServer } from "@/Redux/features/product";
+import { useAppDispatch } from "@/Redux/hooks";
 import { showSwal } from "@/utils/helper";
 import { ProductProps } from "@/utils/types";
 import { useRouter } from "next/navigation";
@@ -9,7 +11,7 @@ import { AiOutlineDelete, AiOutlineEdit, AiOutlineEye } from "react-icons/ai";
 
 const TableProduct = ({ products }: ProductProps[] | any) => {
   const router = useRouter();
-
+  const dispatch = useAppDispatch();
   const [showModal, setShowModal] = useState(false);
   const [data, setdata] = useState<string>("");
   const hideModal = () => setShowModal(false);
@@ -41,19 +43,24 @@ const TableProduct = ({ products }: ProductProps[] | any) => {
     formData.append("category", category);
     formData.append("Asyab", Asyab);
     formData.append("img", img);
-    const res = await fetch(`/api/product/${ID}`, {
-      method: "PUT",
-      body: formData,
+    dispatch(EditproductFromServer({ formData, id: ID })).then((data) => {
+      if (data?.payload?.message === "success") {
+        swal({
+          title: "changed product",
+          icon: "success",
+          buttons: "OK",
+        }).then(() => {
+          router.refresh();
+        });
+      }
     });
-    if (res.status == 200) {
-      swal({
-        title: "changed product",
-        icon: "success",
-        buttons: "OK",
-      }).then(() => {
-        router.refresh();
-      });
-    }
+
+    // const res = await fetch(`/api/product/${ID}`, {
+    //   method: "PUT",
+    //   body: formData,
+    // });
+    // if (res.status == 200) {
+    // }
   };
   const removeProduct = async (ID: string) => {
     swal({
@@ -63,19 +70,31 @@ const TableProduct = ({ products }: ProductProps[] | any) => {
     }).then(async (result) => {
       // console.log(result, userID);
       if (result) {
-        const res = await fetch(`/api/product/${ID}`, {
-          method: "DELETE",
-        });
-        // console.log(res);
-        if (res.status == 200) {
-          swal({
-            title: "deleted successfully:))",
-            icon: "success",
-            buttons: "OK",
-          }).then(() => {
-            router.refresh();
-          });
-        }
+        dispatch(DeleteproductFromServer({id:ID})).then(data=>{
+          if (data?.payload?.message==='success'){
+            swal({
+              title: "deleted successfully:))",
+              icon: "success",
+              buttons: "OK",
+            }).then(() => {
+              router.refresh();
+            });
+          }
+
+        })
+        // const res = await fetch(`/api/product/${ID}`, {
+        //   method: "DELETE",
+        // });
+        // // console.log(res);
+        // if (res.status == 200) {
+        //   swal({
+        //     title: "deleted successfully:))",
+        //     icon: "success",
+        //     buttons: "OK",
+        //   }).then(() => {
+        //     router.refresh();
+        //   });
+        // }
       }
     });
   };
@@ -87,7 +106,7 @@ const TableProduct = ({ products }: ProductProps[] | any) => {
         </div>
       </section>
       <section className="container mt-10 overflow-hidden">
-    <div className="flex flex-col overflow-x-auto">
+        <div className="flex flex-col overflow-x-auto">
           <table className="table-auto text-small-semibold font-shabnam text-center [&_th]:bg-gray-6 [&_td]:border [&_td]:border-gray-6 [&_th]:border [&_th]:border-gray-6  [&_th]:p-3 [&_td]:p-3 border-collapse w-full  border border-gray-6">
             <thead>
               <tr>
@@ -109,35 +128,33 @@ const TableProduct = ({ products }: ProductProps[] | any) => {
                   <td>{item?.price.toLocaleString()}</td>
                   <td>{item.score}</td>
                   <td className="flex items-center gap-2 justify-center">
-              <AiOutlineEye
-               className="cursor-pointer  text-sky-600   text-heading4-medium" 
-               onClick={() => showProductBody(item.shortDescription)}
- 
-              />
-              <AiOutlineEdit 
-              className="cursor-pointer text-orange text-heading4-medium" 
-              onClick={() => {
-                setdata(item._id);
-                setName(item.name);
-                setPrice(item.price);
-                setShortDescription(item.shortDescription)
-                setLongDescription(item.longDescription);
-                setWeight(item.weight);
-                setSuitableFor(item.suitableFor);
-                setSmell(item.smell);
-                setTags(item.tags);
-                setCategory(item.category);
-                setAsyab(item.Asyab);
-                setImg(item.img);
-                setShowModal(true);
-              }} />
-                  <AiOutlineDelete
-                   className="cursor-pointer  text-redprimary-500 text-heading4-medium"
-                   onClick={() => removeProduct(item._id)}
-                   />
-           
-       
-              </td>
+                    <AiOutlineEye
+                      className="cursor-pointer  text-sky-600   text-heading4-medium"
+                      onClick={() => showProductBody(item.shortDescription)}
+                    />
+                    <AiOutlineEdit
+                      className="cursor-pointer text-orange text-heading4-medium"
+                      onClick={() => {
+                        setdata(item._id);
+                        setName(item.name);
+                        setPrice(item.price);
+                        setShortDescription(item.shortDescription);
+                        setLongDescription(item.longDescription);
+                        setWeight(item.weight);
+                        setSuitableFor(item.suitableFor);
+                        setSmell(item.smell);
+                        setTags(item.tags);
+                        setCategory(item.category);
+                        setAsyab(item.Asyab);
+                        setImg(item.img);
+                        setShowModal(true);
+                      }}
+                    />
+                    <AiOutlineDelete
+                      className="cursor-pointer  text-redprimary-500 text-heading4-medium"
+                      onClick={() => removeProduct(item._id)}
+                    />
+                  </td>
                   {/* <td>
                     <button
                       type="button"

@@ -46,7 +46,7 @@ export  async function POST(req:any) {
       password:hashpassed,
       role:user.length>0 ? role.USER:role.ADMIN
     });
-    return Response.json({ message: 'registrer successfuly' }, {
+    return Response.json({ message: 'success' }, {
       status: 201,
       headers:{'set-Cookie':`token=${token};path=/;httpOnly=true`}
     })

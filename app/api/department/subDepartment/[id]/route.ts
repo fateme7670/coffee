@@ -10,7 +10,7 @@ export async function GET(req:any, { params }:{params:{id:string}}) {
         return Response.json({ message: 'should be objectid' }, { status: 404 })
     }
     const subDepartment = await subdepartment.find({ department: id })
-    return Response.json(subDepartment, { status: 200 });
+    return Response.json({message:'success',data:subDepartment}, { status: 200 });
   } catch (error) {
     return Response.json({ message: error }, { status: 500 });
 

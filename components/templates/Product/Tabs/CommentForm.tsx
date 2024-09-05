@@ -1,4 +1,5 @@
 "use client";
+import { useToast } from "@/hooks/use-toast";
 import { AddcommentFromServer } from "@/Redux/features/comment";
 import { useAppDispatch } from "@/Redux/hooks";
 import { verifyemail } from "@/utils/auth";
@@ -7,6 +8,7 @@ import { CommentProps } from "@/utils/types";
 import React, { useEffect, useState } from "react";
 import { FaRegStar, FaStar } from "react-icons/fa";
 import { IoMdStar } from "react-icons/io";
+
 interface Props {
   id: string | undefined;
 }
@@ -17,6 +19,7 @@ const CommentForm = ({ id }: Props) => {
   const [score, setscore] = useState(5);
   const [savedinfo, setsavedinfo] = useState<boolean | any>(false);
   const dispatch=useAppDispatch()
+  const { toast } = useToast();
   useEffect(() => {
   const info= JSON.parse(localStorage.getItem('info'))
    setemail(info?.email)
@@ -42,16 +45,25 @@ const CommentForm = ({ id }: Props) => {
       localStorage.setItem('info',JSON.stringify(info))
     }
     const comment = { username, email, body, score, product: id };
-dispatch(AddcommentFromServer(comment))
+dispatch(AddcommentFromServer(comment)).then((data)=>{
+  console.log(data?.payload);
+  
+  if (data?.payload?.message==='create successfuly') {
+    setbody("");
+    setusername("");
+    setemail("");
+    return showSwal("added comment successfuly", "success", "OK");
+    }
+})
     // const res = await fetch("/api/comment", {
     //   method: "POST",
     //   headers: { "content-Type": "application/json" },
     //   body: JSON.stringify(comment),
     // });
     // if (res.status == 201) {
-    //   setbody("");
-    //   setusername("");
-    //   setemail("");
+      // setbody("");
+      // setusername("");
+      // setemail("");
     //   return showSwal("added comment successfuly", "success", "OK");
     // }
   };

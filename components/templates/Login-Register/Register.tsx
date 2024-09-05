@@ -54,31 +54,42 @@ const Register = ({ showLoginForm }: Props) => {
         password
       }
 
-//   dispatch(RegisterUserFromServer(user))
- 
-    const res = await fetch('/api/auth/signup', {
-      method: "POST",
-      headers: {
-        "content-Type": "application/json"
-      },
-      body: JSON.stringify(user)
-    })
-    console.log(res);
-
-    
-    if (res.status == 201) {
+  dispatch(RegisterUserFromServer({data:user})).then(data=>{
+    if (data?.payload?.message==='success'){
       setEmail("");
       setPhone("");
       setPassword("");
       setName("");
       showSwal("register successfully","success","SignIn")
 router.push('/p-user')
-     
+    }else {
+      return  showSwal("user exist already","error","Try")
     }
-    if (res.status==404) {
-      showSwal("user exist already","error","Try")
+  })
+ 
+//     const res = await fetch('/api/auth/signup', {
+//       method: "POST",
+//       headers: {
+//         "content-Type": "application/json"
+//       },
+//       body: JSON.stringify(user)
+//     })
+//     console.log(res);
 
-    }
+    
+//     if (res.status == 201) {
+//       setEmail("");
+//       setPhone("");
+//       setPassword("");
+//       setName("");
+//       showSwal("register successfully","success","SignIn")
+// router.push('/p-user')
+     
+//     }
+//     if (res.status==404) {
+//       showSwal("user exist already","error","Try")
+
+//     }
   
   }
   return (

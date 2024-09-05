@@ -7,8 +7,9 @@ import UserReducer from './features/users'
 import TiketReducer from './features/Tiket'
 import DepartmentReducer from './features/department'
 import ContactReducer from './features/contact'
-import CartReducer from './features/Cart'
+import CartReducer from './features/cart'
 import ArticleReducer from './features/article'
+import DiscountReducer from './features/discount'
 export const makeStore = () => {
   return configureStore({
     reducer: {
@@ -21,7 +22,8 @@ export const makeStore = () => {
       department:DepartmentReducer,
       contact:ContactReducer,
       cart:CartReducer,
-      article:ArticleReducer
+      article:ArticleReducer,
+      discount:DiscountReducer
     }
   })
 }

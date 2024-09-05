@@ -32,7 +32,7 @@ export async function POST(req:any) {
             maxUse,
             uses,
         })
-        return Response.json({message:'dicount added successfully'},{status:201})
+        return Response.json({message:'success'},{status:201})
 
     } catch (error) {
         // console.log("error dis=>",error);

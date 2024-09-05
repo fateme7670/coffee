@@ -7,16 +7,21 @@ import { SlShuffle } from "react-icons/sl";
 import { FiAlignJustify, FiShoppingCart } from "react-icons/fi";
 import { authUser } from "@/utils/userhelper";
 import { IoIosArrowDown } from "react-icons/io";
+import { useAppDispatch } from "@/Redux/hooks";
+import { UserFromServer } from "@/Redux/features/auth";
 interface Props {
   islogin?: boolean;
 }
 const Navbar = ({ islogin }: Props) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const dispatch=useAppDispatch()
+
   const [dropdown, setIsdropdown] = useState(false);
 const card=JSON.parse(localStorage.getItem('card')) || []
 const [wish, setwish] = useState(0);
 useEffect(() => {
 const wish=async()=>{
+
   const resuser=await fetch('/api/auth/me')
   const user=await resuser.json()
   console.log('users',user._id);

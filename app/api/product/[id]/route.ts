@@ -11,7 +11,7 @@ try {
         return Response.json({ message: 'not valid id' }, { status: 402 })
     }
 await productModel.findOneAndDelete({_id:id})
-return Response.json({msg:'product deleted successfuly'},{status:200})
+return Response.json({message:'success'},{status:200})
 } catch (error) {
     console.log('delete',error);
     
@@ -61,7 +61,7 @@ export async function PUT(req: any,{params}:{params:{id:string}}) {
       }
    });
       return Response.json(
-        { msg: "product updated successfully" , data: product},
+        { message: "success" , data: product},
         { status: 200 }
       );
     } catch (error) {

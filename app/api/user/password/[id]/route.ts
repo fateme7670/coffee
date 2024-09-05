@@ -31,7 +31,7 @@ export async function POST(req:any,{params}:{params:{id:string}}){
               password:hashpassed,
             }
           });
-          return Response.json({ message: "User removed successfully :))" , data: users});
+          return Response.json({ message: "success" , data: users});
         
     } catch (error) {
         return Response.json({ message: error }, { status: 500 });

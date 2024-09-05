@@ -16,7 +16,7 @@ export async function PUT(req:any){
             isAcsept:true
            }
        })
-       return Response.json({message:'comment accepted successfully :))'})
+       return Response.json({message:'success'})
     } catch (error) {
         // console.log("error=> ",error);
         return Response.json({message:error},{status:500})

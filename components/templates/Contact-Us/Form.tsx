@@ -1,9 +1,13 @@
 'use client'
+import { AddContactFromServer } from "@/Redux/features/contact";
+import { useAppDispatch } from "@/Redux/hooks";
 import { verifyemail, verifyphone } from "@/utils/auth";
 import { showSwal } from "@/utils/helper";
 import React, { useState } from "react";
 
 const Form = () => {
+  const dispatch=useAppDispatch()
+
   const [name, setname] = useState("");
   const [email, setemail] = useState("");
   const [phone, setphone] = useState("");
@@ -33,20 +37,30 @@ const Form = () => {
       return showSwal("phone should be like format", "error", "TRY")
 
     }
-    const res = await fetch('/api/contact', {
-      method: "POST",
-      headers: { 'content-Type': 'application/json' },
-      body: JSON.stringify(contact)
-    })
-    // console.log("response->",res);
-    if (res.status == 201) {
-      setname("")
+    dispatch(AddContactFromServer({data:contact})).then(data=>{
+      if (data?.payload?.message==='success'){
+        setname("")
       setemail("")
       setphone("")
       setcompany("")
       setmessage("")
       return showSwal("send successfuly", "success", "OK")
-    }
+      }
+    })
+    // const res = await fetch('/api/contact', {
+    //   method: "POST",
+    //   headers: { 'content-Type': 'application/json' },
+    //   body: JSON.stringify(contact)
+    // })
+    // // console.log("response->",res);
+    // if (res.status == 201) {
+    //   setname("")
+    //   setemail("")
+    //   setphone("")
+    //   setcompany("")
+    //   setmessage("")
+    //   return showSwal("send successfuly", "success", "OK")
+    // }
   }
   return (
     <div className="font-shabnam mt-10">

@@ -2,10 +2,12 @@
 import { Object } from "@/utils/types";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
-
+interface SignupProps{
+data:Object
+}
 export const RegisterUserFromServer = createAsyncThunk(
   "auth/RegisterUserFromServer",
-  async (data: Object) => {
+  async ({data}: SignupProps) => {
     return await fetch(`/api/auth/signup`, {
       method: "POST",
       headers: {
@@ -19,7 +21,7 @@ export const RegisterUserFromServer = createAsyncThunk(
 );
 export const LoginUserFromServer = createAsyncThunk(
   "auth/LoginUserFromServer",
-  async (data: Object) => {
+  async ({data}: SignupProps) => {
     return await fetch(`/api/auth/signin`, {
       method: "POST",
       headers: {

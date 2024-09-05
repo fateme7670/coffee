@@ -1,30 +1,32 @@
 import {ProductProps } from "@/utils/types";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
-
+interface AddProps{
+  formData: any
+}
 export const AddproductFromServer = createAsyncThunk(
   "products/AddproductFromServer",
-  async (data: ProductProps) => {
+  async ({formData}: AddProps) => {
     return await fetch(`/api/product`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
+    
+      body: formData,
     })
       .then((res) => res.json())
       .then((data) => data);
   }
 );
+interface EditProps{
+  id:string
+  formData: any
+}
 export const EditproductFromServer = createAsyncThunk(
   "products/EditproductFromServer",
-  async (data: ProductProps,id) => {
+  async ({formData,id}:EditProps) => {
     return await fetch(`/api/product/${id}`, {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
+     
+      body:formData,
     })
       .then((res) => res.json())
       .then((data) => data);
@@ -40,15 +42,15 @@ export const AllproductFromServer = createAsyncThunk(
       .then((data) => data);
   }
 );
+interface DeleteProps{
+  id:string
+
+}
 export const DeleteproductFromServer = createAsyncThunk(
   "products/DeleteproductFromServer",
-  async (id: string) => {
+  async ({id}: DeleteProps) => {
     return await fetch(`/api/product/${id}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-     
+      method: "DELETE",     
     })
       .then((res) => res.json())
       .then((data) => data);
@@ -61,7 +63,7 @@ const slice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder.addCase(AddproductFromServer.fulfilled, (state , action) => {
-      return [...state];
+      return action.payload;
     });
     builder.addCase(AllproductFromServer.fulfilled, (state , action) => {
       return action.payload;

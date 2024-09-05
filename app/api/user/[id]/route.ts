@@ -15,7 +15,7 @@ export async function DELETE(req:any, { params }:{params:{id:string}}) {
       }
   
       await UserModel.findOneAndDelete({ _id: userid });
-      return Response.json({ message: "User removed successfully :))" });
+      return Response.json({ message: "success" });
     } catch (err) {
       // console.log('errr',err);
       return Response.json({ message: err }, { status: 500 });
@@ -34,7 +34,7 @@ try {
     const name = formData.get("name");
     const email = formData.get("email");
     const phone = formData.get("phone");
-    const password = formData.get("password");
+    // const password = formData.get("password");
    
     const img = formData.get("img");
     const buffer:any = Buffer.from(await img.arrayBuffer());
@@ -44,11 +44,11 @@ try {
         pathimg,
         buffer
     );
-    const passwordverified = verifypassword(password);
-    if (!passwordverified) {
-      return Response.json({ message: 'password not valid' },
-      { status: 422 })
-    }
+    // const passwordverified = verifypassword(password);
+    // if (!passwordverified) {
+    //   return Response.json({ message: 'password not valid' },
+    //   { status: 422 })
+    // }
     const correctEmail = verifyemail(email)
     if (!correctEmail) {
         return Response.json({ message: 'email is not correct:((' }, { status: 402 })
@@ -57,17 +57,17 @@ try {
     if (!correctPhone) {
         return Response.json({ message: 'phone is not correct:((' }, { status: 404 })
     }
-    const hashpassed=await hashPass(password)
+    // const hashpassed=await hashPass(password)
    const users= await UserModel.findOneAndUpdate({ _id: userid },{
         $set:{
           email,
           phone,
           name,
-          password:hashpassed,
+    
           img:`http://localhost:3000/users/${filename}`
         }
       });
-      return Response.json({ message: "User removed successfully :))" , data: users});
+      return Response.json({ message: "success" ,data:users});
     
 } catch (error) {
     return Response.json({ message: error }, { status: 500 });
@@ -97,7 +97,7 @@ export async function PUT(req:any) {
 
       // ✅
       return Response.json(
-          { message: "File uploaded successfully :))" },
+          { message: "successfuly" },
           { status: 201 }
       );
   } catch (err) {

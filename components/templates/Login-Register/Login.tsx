@@ -16,7 +16,7 @@ const Login = ({ showRegisterForm }: Props) => {
   const [password, setpassword] = useState("");
   const cancelForm = () => setisLogin(false);
   const dispatch = useAppDispatch();
-  const router= useRouter()
+  const router = useRouter();
 
   const signin = async () => {
     if (!email) {
@@ -34,40 +34,67 @@ const Login = ({ showRegisterForm }: Props) => {
       showSwal(" password should be like format", "error", "try");
     }
     const user = { email, password };
-    // dispatch(LoginUserFromServer(user))
-    const res= await fetch('/api/auth/signin',{
-      method:"POST",
-      headers:{"content-Type":"application/json"},
-      body:JSON.stringify(user)
-    })
- 
-    const data=await res.json()
-    if (res.status==200) {
-      swal({
-        title:"login successfuly",
-        icon:"success",
-        buttons:"login"
-      }).then(()=>{
-        if (data.data.role==='Admin') {
-          router.replace('/p-admin')
+    dispatch(LoginUserFromServer({ data: user })).then((data) => {
+      if (data?.payload?.message === "success") {
+        swal({
+          title: "login successfuly",
+          icon: "success",
+          buttons: "login",
+        }).then(() => {
+          if (data.payload?.data.role === "Admin") {
+            router.replace("/p-admin");
+          } else {
+            router.replace("/p-user");
+          }
+        });
+      }
+      else  if (data?.payload?.message==='email not valid' || data?.payload?.message==='password not valid'){
+        return showSwal(
+          "email or password should be like format",
+          "error",
+          "try"
+        );
+      }
+      else  if (data?.payload?.message==='user not exist'){
+            return showSwal("user not exist", "error", "try");
 
-        }else{
+      }
+      else  if (data?.payload?.message==='pass or email wrong'){
+     return showSwal("pass or email wrong", "error", "try");
 
-          router.replace('/p-user')
-        }
-      })
-    }else if(res.status==422){
-      return showSwal("email or password should be like format","error","try")
+      }
+    });
 
-    }
-    else if(res.status==419){
-      return showSwal("user not exist","error","try")
+    // const res = await fetch("/api/auth/signin", {
+    //   method: "POST",
+    //   headers: { "content-Type": "application/json" },
+    //   body: JSON.stringify(user),
+    // });
 
-    }
-    else if(res.status==402){
-      return showSwal("pass or email wrong","error","try")
-
-    }
+    // const data = await res.json();
+    // if (res.status == 200) {
+    //   swal({
+    //     title: "login successfuly",
+    //     icon: "success",
+    //     buttons: "login",
+    //   }).then(() => {
+    //     if (data.data.role === "Admin") {
+    //       router.replace("/p-admin");
+    //     } else {
+    //       router.replace("/p-user");
+    //     }
+    //   });
+    // } else if (res.status == 422) {
+      // return showSwal(
+      //   "email or password should be like format",
+      //   "error",
+      //   "try"
+      // );
+    // } else if (res.status == 419) {
+    //   return showSwal("user not exist", "error", "try");
+    // } else if (res.status == 402) {
+    //   return showSwal("pass or email wrong", "error", "try");
+    // }
   };
   return (
     <>

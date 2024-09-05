@@ -48,7 +48,7 @@ export async function POST(req:any, { params }:{params:{id:string}}) {
             website,
             Articel:id
         })
-        return Response.json({ message: ' article view added success' },{status:201})
+        return Response.json({ message: 'success' },{status:201})
 
     } catch (error) {
         // console.log('error view',error);
@@ -90,7 +90,7 @@ export async function PUT(req:any, { params }:{params:{id:string}}) {
                 img: `http://localhost:3000/articels/${filename}`
             }
         })
-        return Response.json({ message: "update successfuly", data: product }, { status: 201 })
+        return Response.json({ message: "success", data: product }, { status: 201 })
 
     } catch (error) {
         // console.log('error view',error);

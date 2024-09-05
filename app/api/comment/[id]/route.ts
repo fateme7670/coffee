@@ -12,7 +12,7 @@ export async function DELETE(req:any, { params }:{params:{id:string}}) {
             return Response.json({ message: 'not valid id' }, { status: 402 })
         }
         await commentModel.findOneAndDelete({ _id: id })
-        return Response.json({ message: 'successfully article deleted success' })
+        return Response.json({ message: 'success' })
 
     } catch (error) {
         return Response.json({ message: error }, { status: 500 })
@@ -39,7 +39,7 @@ export async function PUT(req:any, { params }:{params:{id:string}}) {
         await commentModel.findOneAndUpdate({_id:id},{
             username, body, email
         })
-        return Response.json({ message: ' article view added success' },{status:200})
+        return Response.json({ message: 'success' },{status:200})
 
     } catch (error) {
         // console.log('error view',error);

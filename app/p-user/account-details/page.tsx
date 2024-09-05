@@ -22,11 +22,11 @@ const page =async () => {
         </section>
         <Details
         id={user?._id}
-        name={user.name}
-        email={user.email}
-        phone={user.phone}
+        name={user?.name}
+        email={user?.email}
+        phone={user?.phone}
         img={user?.img}
-        password={user.password}
+        password={user?.password}
         />
       </main>
     </Layout>

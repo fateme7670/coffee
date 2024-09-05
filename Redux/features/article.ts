@@ -1,29 +1,49 @@
 import {ArticlesProps, ProductProps } from "@/utils/types";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+interface Props{
 
+  formData: any
+}
 
 export const AddarticleFromServer = createAsyncThunk(
   "article/AddarticleFromServer",
-  async (data: ArticlesProps) => {
+  async ({formData}: Props) => {
     return await fetch(`/api/article`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
+      
+      body: formData,
     })
       .then((res) => res.json())
       .then((data) => data);
   }
 );
+interface EditProps{
+id:string
+  formData: any
+}
+
 export const EditArticleFromServer = createAsyncThunk(
   "article/EditArticleFromServer",
-  async (data: ArticlesProps,id) => {
+  async ({formData,id}:EditProps) => {
     return await fetch(`/api/article/${id}`, {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
+     
+      body: formData,
+    })
+      .then((res) => res.json())
+      .then((data) => data);
+  }
+);
+interface FormProps{
+  id:string
+  data: any
+  }
+export const FormArticleFromServer = createAsyncThunk(
+  "article/FormArticleFromServer",
+  async ({data,id}:FormProps) => {
+    return await fetch(`/api/article/${id}`, {
+      method: "POST",
+     
       body: JSON.stringify(data),
     })
       .then((res) => res.json())
@@ -40,14 +60,17 @@ export const AllArticleromServer = createAsyncThunk(
       .then((data) => data);
   }
 );
+interface DeleteProps{
+
+  id: string
+}
+
 export const DeleteArticleFromServer = createAsyncThunk(
   "article/DeleteArticleFromServer",
-  async (id: string) => {
+  async ({id}: DeleteProps) => {
     return await fetch(`/api/article/${id}`, {
       method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
+     
      
     })
       .then((res) => res.json())
@@ -61,6 +84,9 @@ const slice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder.addCase(AddarticleFromServer.fulfilled, (state , action) => {
+      return [...state];
+    });
+    builder.addCase(FormArticleFromServer.fulfilled, (state , action) => {
       return [...state];
     });
     builder.addCase(AllArticleromServer.fulfilled, (state , action) => {

@@ -11,7 +11,7 @@ export async function PUT(req:any){
     {$set:{
        role: user.role==='User' ? "Admin" :"User"
     }})
-    return Response.json({message:'user role updated successfuly'},{status:200})
+    return Response.json({message:'success'},{status:200})
     } catch (error) {
         return Response.json({message:error},{status:500})
 

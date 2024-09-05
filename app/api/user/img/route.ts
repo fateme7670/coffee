@@ -23,7 +23,7 @@ export async function PUT(req:any) {
     //         img
     //     }
     //    })
-      return Response.json({ message: "User removed successfully :))" });
+      return Response.json({ message: "success" });
     } catch (err) {
       // console.log('errr',err);
       return Response.json({ message: err }, { status: 500 });
